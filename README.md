@@ -12,3 +12,5 @@
 - FastAPI
 - EasyOCR
 - Python
+
+example commit

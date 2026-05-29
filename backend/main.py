@@ -1,3 +1,6 @@
+from database import SessionLocal, engine
+from models import Receipt, ReceiptItem
+from database import Base
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 import google.generativeai as genai
@@ -6,9 +9,17 @@ import os
 import json
 import re
 
-app = FastAPI()
+from database import SessionLocal, engine, Base
+from models import Receipt, ReceiptItem
 
-# CORS
+# Create FastAPI app
+app = FastAPI()
+Base.metadata.create_all(bind=engine)
+
+# Create database tables
+Base.metadata.create_all(bind=engine)
+
+# Enable CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -17,19 +28,26 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Gemini API Key
+# Configure Gemini API
 genai.configure(
-    api_key="AIzaSyDyYDrITZnGGqPy4uQyz-i0JICAfqn8zr4"
+    api_key="AIzaSyBTppu6kL3PqUAdJdkfTrFQAzc7LBc76sU"
 )
 
 # Gemini model
-model = genai.GenerativeModel("gemini-flash-latest")
+model = genai.GenerativeModel("gemini-3.1-flash-lite")
 
 # Upload folder
 UPLOAD_FOLDER = "uploads"
 
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
+
+
+@app.get("/")
+def home():
+    return {
+        "message": "Receipt AI Backend Running Successfully"
+    }
 
 
 @app.post("/upload-receipt")
@@ -46,7 +64,7 @@ async def upload_receipt(file: UploadFile = File(...)):
         # Open image
         image = Image.open(file_path)
 
-        # Prompt
+        # AI Prompt
         prompt = """
         Analyze this receipt image carefully.
 
@@ -65,7 +83,7 @@ async def upload_receipt(file: UploadFile = File(...)):
         IMPORTANT:
         Return ONLY VALID JSON.
 
-        Example format:
+        Example:
 
         {
           "store_name": "ABC Store",
@@ -82,19 +100,50 @@ async def upload_receipt(file: UploadFile = File(...)):
         }
         """
 
-        # Gemini response
+        # Generate AI response
         response = model.generate_content(
             [prompt, image]
         )
 
         text = response.text
 
-        # Clean markdown if Gemini returns ```json
+        # Remove markdown formatting if present
         text = re.sub(r"```json", "", text)
         text = re.sub(r"```", "", text)
 
-        # Convert string to JSON
+        # Convert AI response to JSON
         data = json.loads(text)
+
+        # Create DB session
+        db = SessionLocal()
+
+        # Create receipt row
+        new_receipt = Receipt(
+            store_name=data.get("store_name"),
+            date=data.get("date"),
+            time=data.get("time"),
+            total_amount=data.get("total_amount"),
+            tax=data.get("tax")
+        )
+
+        db.add(new_receipt)
+        db.commit()
+        db.refresh(new_receipt)
+
+        # Save receipt items
+        for item in data.get("items", []):
+
+            receipt_item = ReceiptItem(
+                name=item.get("name"),
+                price=item.get("price"),
+                receipt_id=new_receipt.id
+            )
+
+            db.add(receipt_item)
+
+        db.commit()
+
+        db.close()
 
         return data
 

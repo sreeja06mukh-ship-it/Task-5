@@ -23,7 +23,7 @@ function App() {
 
     try {
       const response = await axios.post(
-        "http://api.sreeja.me/upload-receipt",
+        "https://api.sreeja.me/upload-receipt",
         formData,
         {
           headers: {

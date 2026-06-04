@@ -1,6 +1,3 @@
-from database import SessionLocal, engine
-from models import Receipt, ReceiptItem
-from database import Base
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 import google.generativeai as genai
@@ -8,6 +5,13 @@ from PIL import Image
 import os
 import json
 import re
+
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 from database import SessionLocal, engine, Base
 from models import Receipt, ReceiptItem
@@ -29,9 +33,7 @@ app.add_middleware(
 )
 
 # Configure Gemini API
-genai.configure(
-    api_key="AIzaSyBTppu6kL3PqUAdJdkfTrFQAzc7LBc76sU"
-)
+genai.configure(api_key=GEMINI_API_KEY)
 
 # Gemini model
 model = genai.GenerativeModel("gemini-3.1-flash-lite")
@@ -66,47 +68,37 @@ async def upload_receipt(file: UploadFile = File(...)):
 
         # AI Prompt
         prompt = """
-        Analyze this receipt image carefully.
+        Look at this receipt.
 
-        Extract:
-        - store_name
-        - date
-        - time
-        - total_amount
-        - tax
-        - items
-
-        The items array should contain:
-        - name
-        - price
-
-        IMPORTANT:
-        Return ONLY VALID JSON.
-
-        Example:
+        Return ONLY valid JSON.
 
         {
-          "store_name": "ABC Store",
-          "date": "2026-05-25",
-          "time": "11:30 AM",
-          "total_amount": "450",
-          "tax": "20",
-          "items": [
-            {
-              "name": "Burger",
-              "price": "200"
-            }
-          ]
+         "amount":"",
+          "category":"",
+        "date":"",
+        "description":""
         }
-        """
 
+        Categories allowed:
+
+        Food
+        Travel
+        Shopping
+        Utilities
+        Health
+        Entertainment
+        Other
+
+        If date is missing use today's date.
+        """
+        print(image)
         # Generate AI response
         response = model.generate_content(
             [prompt, image]
         )
 
         text = response.text
-
+        print(text)
         # Remove markdown formatting if present
         text = re.sub(r"```json", "", text)
         text = re.sub(r"```", "", text)

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import "./App.css";
+import ItemBarChart from "./components/ItemBarChart";
 
 function App() {
   const [file, setFile] = useState(null);
@@ -86,56 +87,39 @@ function App() {
               <tbody>
 
                 <tr>
-                  <td>Store Name</td>
-                  <td>{receiptData.store_name}</td>
-                </tr>
+                <td>Amount</td>
+                <td>{receiptData.amount}</td>
+              </tr>
 
-                <tr>
-                  <td>Date</td>
-                  <td>{receiptData.date}</td>
-                </tr>
+              <tr>
+                <td>Category</td>
+                <td>{receiptData.category}</td>
+              </tr>
 
-                <tr>
-                  <td>Time</td>
-                  <td>{receiptData.time}</td>
-                </tr>
+              <tr>
+                <td>Date</td>
+                <td>{receiptData.date}</td>
+              </tr>
 
-                <tr>
-                  <td>Total Amount</td>
-                  <td>{receiptData.total_amount}</td>
-                </tr>
-
-                <tr>
-                  <td>Tax</td>
-                  <td>{receiptData.tax}</td>
-                </tr>
+              <tr>
+                <td>Description</td>
+                <td>{receiptData.description}</td>
+              </tr>
 
               </tbody>
             </table>
 
-            <h3>Items Purchased</h3>
 
-            <table>
-              <thead>
-                <tr>
-                  <th>SL No.</th>
-                  <th>Item</th>
-                  <th>Price</th>
-                </tr>
-              </thead>
+            <h3>Expense Analysis</h3>
 
-              <tbody>
-
-                {receiptData.items?.map((item, index) => (
-                  <tr key={index}>
-                    <td>{index + 1}</td>
-                    <td>{item.name}</td>
-                    <td>{item.price}</td>
-                  </tr>
-                ))}
-
-              </tbody>
-            </table>
+<ItemBarChart
+  items={
+    receiptData.items?.map((item) => ({
+      name: item.name,
+      price: parseFloat(item.price) || 0,
+    })) || []
+  }
+/>
 
           </div>
         )}

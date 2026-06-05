@@ -1,30 +1,23 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, Numeric, Date, DateTime
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
+
 from database import Base
 
 
-class Receipt(Base):
-
-    __tablename__ = "receipts"
-
-    id = Column(Integer, primary_key=True, index=True)
-    store_name = Column(String)
-    date = Column(String)
-    time = Column(String)
-    total_amount = Column(String)
-    tax = Column(String)
-
-    items = relationship("ReceiptItem", back_populates="receipt")
-
-
-class ReceiptItem(Base):
-
-    __tablename__ = "receipt_items"
+class Expense(Base):
+    __tablename__ = "expenses"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String)
-    price = Column(String)
 
-    receipt_id = Column(Integer, ForeignKey("receipts.id"))
+    amount = Column(Numeric, nullable=False)
+    category = Column(String)
+    description = Column(String)
 
-    receipt = relationship("Receipt", back_populates="items")
+    expense_date = Column(Date)
+
+    image_path = Column(String)
+
+    source = Column(String)
+
+    created_at = Column(DateTime, server_default=func.now())

@@ -14,7 +14,7 @@ load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 from database import SessionLocal, engine, Base
-from models import Receipt, ReceiptItem
+from models import Expense
 
 # Create FastAPI app
 app = FastAPI()
@@ -51,12 +51,33 @@ def home():
         "message": "Receipt AI Backend Running Successfully"
     }
 
+@app.get("/expenses")
+def get_expenses():
+
+    db = SessionLocal()
+
+    expenses = db.query(Expense).all()
+
+    result = []
+
+    for e in expenses:
+        result.append({
+            "id": e.id,
+            "amount": float(e.amount),
+            "category": e.category,
+            "description": e.description,
+            "expense_date": str(e.expense_date),
+            "image_path": e.image_path,
+            "source": e.source
+        })
+
+    db.close()
+
+    return result
 
 @app.post("/upload-receipt")
 async def upload_receipt(file: UploadFile = File(...)):
-
     try:
-
         # Save uploaded file
         file_path = f"{UPLOAD_FOLDER}/{file.filename}"
 
@@ -73,10 +94,10 @@ async def upload_receipt(file: UploadFile = File(...)):
         Return ONLY valid JSON.
 
         {
-         "amount":"",
-          "category":"",
-        "date":"",
-        "description":""
+            "amount": "",
+            "category": "",
+            "date": "",
+            "description": ""
         }
 
         Categories allowed:
@@ -91,17 +112,19 @@ async def upload_receipt(file: UploadFile = File(...)):
 
         If date is missing use today's date.
         """
+
         print(image)
+
         # Generate AI response
-        response = model.generate_content(
-            [prompt, image]
-        )
+        response = model.generate_content([prompt, image])
 
         text = response.text
         print(text)
+
         # Remove markdown formatting if present
         text = re.sub(r"```json", "", text)
         text = re.sub(r"```", "", text)
+        text = text.strip()
 
         # Convert AI response to JSON
         data = json.loads(text)
@@ -109,38 +132,35 @@ async def upload_receipt(file: UploadFile = File(...)):
         # Create DB session
         db = SessionLocal()
 
-        # Create receipt row
-        new_receipt = Receipt(
-            store_name=data.get("store_name"),
-            date=data.get("date"),
-            time=data.get("time"),
-            total_amount=data.get("total_amount"),
-            tax=data.get("tax")
+        from datetime import datetime
+
+        expense = Expense(
+            amount=float(data.get("amount", 0)),
+            category=data.get("category", "Other"),
+            description=data.get("description", ""),
+            expense_date=datetime.strptime(
+                data.get("date"),
+                "%Y-%m-%d"
+            ).date(),
+            image_path=file_path,
+            source="receipt_upload"
         )
 
-        db.add(new_receipt)
+        db.add(expense)
         db.commit()
-        db.refresh(new_receipt)
-
-        # Save receipt items
-        for item in data.get("items", []):
-
-            receipt_item = ReceiptItem(
-                name=item.get("name"),
-                price=item.get("price"),
-                receipt_id=new_receipt.id
-            )
-
-            db.add(receipt_item)
-
-        db.commit()
+        db.refresh(expense)
 
         db.close()
 
-        return data
+        return {
+            "message": "Expense saved successfully",
+            "expense": data
+        }
 
     except Exception as e:
-
         return {
             "error": str(e)
         }
+
+
+

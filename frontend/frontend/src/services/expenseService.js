@@ -9,3 +9,15 @@ export const getExpenses = async () => {
 
   return response.json();
 };
+
+export const getMonthlySummary = async (month) => {
+  const response = await fetch(
+    `${API_URL}/expenses/summary?month=${month}`
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch monthly summary");
+  }
+
+  return response.json();
+};

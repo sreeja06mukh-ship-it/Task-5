@@ -5,6 +5,7 @@ from PIL import Image
 import os
 import json
 import re
+from sqlalchemy import extract
 
 from dotenv import load_dotenv
 import os
@@ -53,6 +54,37 @@ def home():
 
 @app.get("/expenses")
 def get_expenses():
+
+    from sqlalchemy import extract
+
+@app.get("/expenses/summary")
+def get_summary(month: str):
+
+    db = SessionLocal()
+
+    year = int(month.split("-")[0])
+    month_num = int(month.split("-")[1])
+
+    expenses = (
+        db.query(Expense)
+        .filter(
+            extract("year", Expense.expense_date) == year,
+            extract("month", Expense.expense_date) == month_num
+        )
+        .all()
+    )
+
+    summary = {}
+
+    for expense in expenses:
+        if expense.category not in summary:
+            summary[expense.category] = 0
+
+        summary[expense.category] += float(expense.amount)
+
+    db.close()
+
+    return summary 
 
     db = SessionLocal()
 

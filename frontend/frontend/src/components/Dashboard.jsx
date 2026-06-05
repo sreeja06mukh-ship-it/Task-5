@@ -1,43 +1,44 @@
 import { useEffect, useState } from "react";
-import { getExpenses } from "../services/expenseService";
+import { getMonthlySummary } from "../services/expenseService";
 import ExpensePieChart from "./ExpensePieChart";
 
 function Dashboard() {
-  const [expenses, setExpenses] = useState([]);
+
+  const [month, setMonth] = useState("2026-06");
+
+  const [chartData, setChartData] = useState([]);
 
   useEffect(() => {
-    getExpenses().then(setExpenses);
-  }, []);
 
-  const summary = {};
+    getMonthlySummary(month)
+      .then((data) => {
 
-  expenses.forEach((expense) => {
-    if (!summary[expense.category]) {
-      summary[expense.category] = 0;
-    }
+        const formatted = Object.entries(data).map(
+          ([category, amount]) => ({
+            category,
+            amount,
+          })
+        );
 
-    summary[expense.category] += expense.amount;
-  });
+        setChartData(formatted);
 
-  const chartData = Object.entries(summary).map(
-    ([category, amount]) => ({
-      category,
-      amount,
-    })
-  );
+      });
 
-  const totalSpend = expenses.reduce(
-    (sum, expense) => sum + expense.amount,
-    0
-  );
+  }, [month]);
 
   return (
     <div>
+
       <h2>Expense Dashboard</h2>
 
-      <h3>Total Spend: ₹{totalSpend}</h3>
+      <input
+        type="month"
+        value={month}
+        onChange={(e) => setMonth(e.target.value)}
+      />
 
       <ExpensePieChart data={chartData} />
+
     </div>
   );
 }

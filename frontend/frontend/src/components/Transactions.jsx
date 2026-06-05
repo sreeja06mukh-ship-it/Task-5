@@ -21,6 +21,7 @@ function Transactions() {
             <th>Category</th>
             <th>Amount</th>
             <th>Description</th>
+            <th>Source</th>
           </tr>
         </thead>
 
@@ -31,6 +32,8 @@ function Transactions() {
               <td>{expense.category}</td>
               <td>₹{expense.amount}</td>
               <td>{expense.description}</td>
+               <td>{expense.source}</td>
+
             </tr>
           ))}
         </tbody>

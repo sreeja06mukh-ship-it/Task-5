@@ -3,6 +3,7 @@ import axios from "axios";
 import "./App.css";
 import ItemBarChart from "./components/ItemBarChart";
 import Dashboard from "./components/Dashboard";
+import Transactions from "./components/Transactions";
 
 
 function App() {
@@ -115,6 +116,8 @@ function App() {
 
 
         <Dashboard /> 
+
+        <Transactions />
           </div>
         )}
 

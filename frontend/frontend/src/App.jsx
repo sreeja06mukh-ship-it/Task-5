@@ -123,11 +123,5 @@ function App() {
     </div>
   );
 }
-
-export default App;
-
-<div>
-
 <Dashboard />
-
-</div>
+export default App;

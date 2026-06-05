@@ -33,9 +33,7 @@ function App() {
         }
       );
 
-      console.log(response.data);
-
-      setReceiptData(response.data.expense);
+      setReceiptData(response.data);
     } catch (err) {
       console.log(err);
 
@@ -133,3 +131,4 @@ function App() {
 }
 
 export default App;
+

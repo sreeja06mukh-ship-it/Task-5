@@ -52,48 +52,17 @@ def home():
         "message": "Receipt AI Backend Running Successfully"
     }
 
+from sqlalchemy import extract, func
+
 @app.get("/expenses")
 def get_expenses():
-
-    from sqlalchemy import extract
-
-@app.get("/expenses/summary")
-def get_summary(month: str):
-
-    db = SessionLocal()
-
-    year = int(month.split("-")[0])
-    month_num = int(month.split("-")[1])
-
-    expenses = (
-        db.query(Expense)
-        .filter(
-            extract("year", Expense.expense_date) == year,
-            extract("month", Expense.expense_date) == month_num
-        )
-        .all()
-    )
-
-    summary = {}
-
-    for expense in expenses:
-        if expense.category not in summary:
-            summary[expense.category] = 0
-
-        summary[expense.category] += float(expense.amount)
-
-    db.close()
-
-    return summary 
 
     db = SessionLocal()
 
     expenses = db.query(Expense).all()
 
-    result = []
-
-    for e in expenses:
-        result.append({
+    result = [
+        {
             "id": e.id,
             "amount": float(e.amount),
             "category": e.category,
@@ -101,11 +70,46 @@ def get_summary(month: str):
             "expense_date": str(e.expense_date),
             "image_path": e.image_path,
             "source": e.source
-        })
+        }
+        for e in expenses
+    ]
 
     db.close()
 
     return result
+
+
+@app.get("/expenses/summary")
+def get_summary(month: str):
+
+    year, month_num = month.split("-")
+
+    db = SessionLocal()
+
+    expenses = (
+        db.query(
+            Expense.category,
+            func.sum(Expense.amount).label("total")
+        )
+        .filter(
+            extract("year", Expense.expense_date) == int(year),
+            extract("month", Expense.expense_date) == int(month_num)
+        )
+        .group_by(Expense.category)
+        .all()
+    )
+
+    db.close()
+
+    return [
+        {
+            "category": e.category,
+            "amount": float(e.total)
+        }
+        for e in expenses
+    ]
+
+
 
 @app.post("/upload-receipt")
 async def upload_receipt(file: UploadFile = File(...)):

@@ -2,6 +2,8 @@ import { useState } from "react";
 import axios from "axios";
 import "./App.css";
 import ItemBarChart from "./components/ItemBarChart";
+import Dashboard from "./components/Dashboard";
+
 
 function App() {
   const [file, setFile] = useState(null);
@@ -112,16 +114,6 @@ function App() {
             </table>
 
 
-            <h3>Expense Analysis</h3>
-
-<ItemBarChart
-  items={
-    receiptData.items?.map((item) => ({
-      name: item.name,
-      price: parseFloat(item.price) || 0,
-    })) || []
-  }
-/>
 
           </div>
         )}
@@ -133,3 +125,9 @@ function App() {
 }
 
 export default App;
+
+<div>
+
+<Dashboard />
+
+</div>

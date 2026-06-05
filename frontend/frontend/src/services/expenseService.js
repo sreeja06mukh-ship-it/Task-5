@@ -1,4 +1,4 @@
-const API_URL = "https://api.sreeja.me"; // your backend URL
+const API_URL = "https://api.sreeja.me";
 
 export const getExpenses = async () => {
   const response = await fetch(`${API_URL}/expenses`);

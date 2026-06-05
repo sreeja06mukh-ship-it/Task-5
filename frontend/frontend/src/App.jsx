@@ -114,7 +114,7 @@ function App() {
             </table>
 
 
-
+        <Dashboard /> 
           </div>
         )}
 
@@ -123,5 +123,5 @@ function App() {
     </div>
   );
 }
-<Dashboard />
+
 export default App;

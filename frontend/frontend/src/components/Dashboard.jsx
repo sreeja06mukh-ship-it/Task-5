@@ -14,17 +14,12 @@ function Dashboard() {
     getMonthlySummary(month)
       .then((data) => {
 
-console.log("Summary Data:", data);
-
-      const formatted = Object.entries(data).map(
-        ([category, amount]) => ({
-          category,
-          amount,
-        })
-      );
-
-      setChartData(formatted);
-
+        const formatted = Object.entries(data).map(
+          ([category, amount]) => ({
+            category,
+            amount,
+          })
+        );
 
         setChartData(formatted);
 

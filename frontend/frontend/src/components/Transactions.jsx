@@ -2,13 +2,24 @@ import { useEffect, useState } from "react";
 
 function Transactions() {
   const [expenses, setExpenses] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch("https://api.sreeja.me/expenses")
       .then((res) => res.json())
-      .then((data) => setExpenses(data))
-      .catch((err) => console.error(err));
+      .then((data) => {
+        setExpenses(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+      });
   }, []);
+
+  if (loading) {
+    return <p>Loading transactions...</p>;
+  }
 
   return (
     <div>
@@ -32,8 +43,7 @@ function Transactions() {
               <td>{expense.category}</td>
               <td>₹{expense.amount}</td>
               <td>{expense.description}</td>
-               <td>{expense.source}</td>
-
+              <td>{expense.source}</td>
             </tr>
           ))}
         </tbody>

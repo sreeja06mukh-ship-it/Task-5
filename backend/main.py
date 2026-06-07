@@ -109,8 +109,6 @@ def get_summary(month: str):
         for e in expenses
     ]
 
-
-
 @app.post("/upload-receipt")
 async def upload_receipt(file: UploadFile = File(...)):
     try:

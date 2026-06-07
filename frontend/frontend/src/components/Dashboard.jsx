@@ -3,6 +3,7 @@ import { getMonthlySummary } from "../services/expenseService";
 import ExpensePieChart from "./ExpensePieChart";
 
 function Dashboard() {
+  const [summary, setSummary] = useState(null);
 
   const [month, setMonth] = useState("2026-06");
 
@@ -13,12 +14,17 @@ function Dashboard() {
     getMonthlySummary(month)
       .then((data) => {
 
-        const formatted = Object.entries(data).map(
-          ([category, amount]) => ({
-            category,
-            amount,
-          })
-        );
+console.log("Summary Data:", data);
+
+      const formatted = Object.entries(data).map(
+        ([category, amount]) => ({
+          category,
+          amount,
+        })
+      );
+
+      setChartData(formatted);
+
 
         setChartData(formatted);
 

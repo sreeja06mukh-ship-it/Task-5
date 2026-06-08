@@ -9,6 +9,8 @@ from sqlalchemy import extract
 
 from dotenv import load_dotenv
 import os
+from typing import Optional
+from datetime import date
 
 load_dotenv()
 
@@ -55,11 +57,26 @@ def home():
 from sqlalchemy import extract, func
 
 @app.get("/expenses")
-def get_expenses():
+def get_expenses(
+    from_date: Optional[str] = None,
+    to_date: Optional[str] = None
+):
 
     db = SessionLocal()
 
-    expenses = db.query(Expense).all()
+    query = db.query(Expense)
+
+    if from_date:
+        query = query.filter(
+            Expense.expense_date >= from_date
+        )
+
+    if to_date:
+        query = query.filter(
+            Expense.expense_date <= to_date
+        )
+
+    expenses = query.all()
 
     result = [
         {

@@ -29,6 +29,34 @@ function Transactions() {
     fetchExpenses("https://api.sreeja.me/expenses");
   }, []);
 
+  const handleDelete = async (id) => {
+  const confirmDelete = window.confirm(
+    "Are you sure you want to delete this expense?"
+  );
+
+  if (!confirmDelete) {
+    return;
+  }
+
+  try {
+    await fetch(
+      `https://api.sreeja.me/expenses/${id}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+    setExpenses(
+      expenses.filter(
+        (expense) => expense.id !== id
+      )
+    );
+  } catch (error) {
+    console.error(error);
+    alert("Failed to delete expense.");
+  }
+};
+
   const handleFilter = () => {
     let url = "https://api.sreeja.me/expenses";
 
@@ -160,6 +188,7 @@ function Transactions() {
         Export CSV
       </button>
 
+
       <div style={{ marginBottom: "15px" }}>
         <input
           type="text"
@@ -238,24 +267,36 @@ function Transactions() {
 
       <table border="1" cellPadding="10">
         <thead>
-          <tr>
-            <th>Date</th>
-            <th>Category</th>
-            <th>Amount</th>
-            <th>Description</th>
-            <th>Source</th>
-          </tr>
+
+<tr>
+  <th>Date</th>
+  <th>Category</th>
+  <th>Amount</th>
+  <th>Description</th>
+  <th>Source</th>
+  <th>Action</th>
+</tr>
         </thead>
 
         <tbody>
           {currentExpenses.map((expense) => (
-            <tr key={expense.id}>
-              <td>{expense.expense_date}</td>
-              <td>{expense.category}</td>
-              <td>₹{expense.amount}</td>
-              <td>{expense.description}</td>
-              <td>{expense.source}</td>
-            </tr>
+<tr key={expense.id}>
+  <td>{expense.expense_date}</td>
+  <td>{expense.category}</td>
+  <td>₹{expense.amount}</td>
+  <td>{expense.description}</td>
+  <td>{expense.source}</td>
+
+  <td>
+    <button
+      onClick={() =>
+        handleDelete(expense.id)
+      }
+    >
+      Delete
+    </button>
+  </td>
+</tr>
           ))}
         </tbody>
       </table>

@@ -1,10 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
 import "./App.css";
-import ItemBarChart from "./components/ItemBarChart";
 import Dashboard from "./components/Dashboard";
 import Transactions from "./components/Transactions";
-
 
 function App() {
   const [file, setFile] = useState(null);
@@ -45,16 +43,14 @@ function App() {
       setError(
         "Sorry, we are getting high requests or server error. Please try again."
       );
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
     <div className="container">
-
       <div className="card">
-
         <h1>AI Receipt Scanner</h1>
 
         <p className="subtitle">
@@ -63,11 +59,12 @@ function App() {
 
         <input
           type="file"
+          accept="image/*"
           onChange={(e) => setFile(e.target.files[0])}
         />
 
-        <button onClick={handleUpload}>
-          Upload Receipt
+        <button onClick={handleUpload} disabled={loading}>
+          {loading ? "Uploading..." : "Upload Receipt"}
         </button>
 
         {loading && (
@@ -77,52 +74,41 @@ function App() {
           </div>
         )}
 
-        {error && (
-          <div className="error-box">
-            {error}
-          </div>
-        )}
+        {error && <div className="error-box">{error}</div>}
 
         {receiptData && (
           <div className="result-section">
-
             <h2>Receipt Details</h2>
 
             <table>
               <tbody>
+                <tr>
+                  <td>Amount</td>
+                  <td>{receiptData.amount}</td>
+                </tr>
 
                 <tr>
-                <td>Amount</td>
-                <td>{receiptData.amount}</td>
-              </tr>
+                  <td>Category</td>
+                  <td>{receiptData.category}</td>
+                </tr>
 
-              <tr>
-                <td>Category</td>
-                <td>{receiptData.category}</td>
-              </tr>
+                <tr>
+                  <td>Date</td>
+                  <td>{receiptData.date}</td>
+                </tr>
 
-              <tr>
-                <td>Date</td>
-                <td>{receiptData.date}</td>
-              </tr>
-
-              <tr>
-                <td>Description</td>
-                <td>{receiptData.description}</td>
-              </tr>
-
+                <tr>
+                  <td>Description</td>
+                  <td>{receiptData.description}</td>
+                </tr>
               </tbody>
             </table>
 
-
-        <Dashboard /> 
-
-        <Transactions />
+            <Dashboard />
+            <Transactions />
           </div>
         )}
-
       </div>
-
     </div>
   );
 }

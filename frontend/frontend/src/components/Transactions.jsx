@@ -421,3 +421,4 @@ const [editDate, setEditDate] = useState("");
 }
 
 export default Transactions;
+

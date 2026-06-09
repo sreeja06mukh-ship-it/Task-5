@@ -6,6 +6,10 @@ function Transactions() {
   const [toDate, setToDate] = useState("");
   const [loading, setLoading] = useState(true);
 
+  const [currentPage, setCurrentPage] = useState(1);
+
+const recordsPerPage = 10;
+
   const fetchExpenses = async (url) => {
     try {
       const response = await fetch(url);
@@ -36,7 +40,19 @@ function Transactions() {
   if (loading) {
     return <p>Loading transactions...</p>;
   }
+  
+  const lastIndex = currentPage * recordsPerPage;
 
+const firstIndex = lastIndex - recordsPerPage;
+
+const currentExpenses = expenses.slice(
+  firstIndex,
+  lastIndex
+);
+
+const totalPages = Math.ceil(
+  expenses.length / recordsPerPage
+);
   return (
     <div>
       <h2>Transactions</h2>
@@ -75,7 +91,7 @@ function Transactions() {
         </thead>
 
         <tbody>
-          {expenses.map((expense) => (
+          {currentExpenses.map((expense) => (
             <tr key={expense.id}>
               <td>{expense.expense_date}</td>
               <td>{expense.category}</td>

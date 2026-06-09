@@ -5,23 +5,16 @@ import ExpensePieChart from "./ExpensePieChart";
 function Dashboard() {
   const [summary, setSummary] = useState({});
   const [month, setMonth] = useState("2026-06");
-  const [chartData, setChartData] = useState([]);
+  const [summary, setSummary] = useState([]);
 
   useEffect(() => {
     getMonthlySummary(month)
       .then((data) => {
         console.log("Summary Data:", data);
 
-        setSummary(data);
+      setSummary(data);
 
-        const formatted = Object.entries(data).map(
-          ([category, amount]) => ({
-            category,
-            amount,
-          })
-        );
-
-        setChartData(formatted);
+setChartData(data);
       })
       .catch((error) => {
         console.error("Error fetching summary:", error);
@@ -40,17 +33,17 @@ function Dashboard() {
 
       <h3>Category Totals</h3>
 
-      {Object.keys(summary).length > 0 ? (
-        <div>
-          {Object.entries(summary).map(([category, amount]) => (
-            <p key={category}>
-              <strong>{category}</strong>: ₹{amount}
-            </p>
-          ))}
-        </div>
-      ) : (
-        <p>No expenses found for this month.</p>
-      )}
+{summary.length > 0 ? (
+  <div>
+    {summary.map((item) => (
+      <p key={item.category}>
+        <strong>{item.category}</strong>: ₹{item.amount}
+      </p>
+    ))}
+  </div>
+) : (
+  <p>No expenses found for this month.</p>
+)}
 
       <ExpensePieChart data={chartData} />
     </div>

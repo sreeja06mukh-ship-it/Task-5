@@ -34,6 +34,7 @@ const recordsPerPage = 10;
       url += `?from_date=${fromDate}&to_date=${toDate}`;
     }
 
+    setCurrentPage(1);
     fetchExpenses(url);
   };
 
@@ -102,6 +103,25 @@ const totalPages = Math.ceil(
           ))}
         </tbody>
       </table>
+      <div style={{ marginTop: "20px" }}>
+  <button
+    onClick={() => setCurrentPage(currentPage - 1)}
+    disabled={currentPage === 1}
+  >
+    Previous
+  </button>
+
+  <span style={{ margin: "0 15px" }}>
+    Page {currentPage} of {totalPages}
+  </span>
+
+  <button
+    onClick={() => setCurrentPage(currentPage + 1)}
+    disabled={currentPage === totalPages}
+  >
+    Next
+  </button>
+</div>
     </div>
   );
 }

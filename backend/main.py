@@ -11,6 +11,9 @@ from dotenv import load_dotenv
 import os
 from typing import Optional
 from datetime import date
+from pydantic import BaseModel
+
+
 
 load_dotenv()
 
@@ -213,7 +216,7 @@ async def upload_receipt(file: UploadFile = File(...)):
             "error": str(e)
         }
     
-    
+
 @app.delete("/expenses/{expense_id}")
 def delete_expense(expense_id: int):
 
@@ -237,4 +240,48 @@ def delete_expense(expense_id: int):
         "message": "Expense deleted successfully"
     }
 
+class ExpenseUpdate(BaseModel):
+    amount: float
+    category: str
+    description: str
+    expense_date: str
+
+@app.put("/expenses/{expense_id}")
+def update_expense(
+    expense_id: int,
+    updated: ExpenseUpdate
+):
+
+    db = SessionLocal()
+
+    expense = (
+        db.query(Expense)
+        .filter(Expense.id == expense_id)
+        .first()
+    )
+
+    if expense is None:
+        db.close()
+        return {
+            "message": "Expense not found"
+        }
+
+    from datetime import datetime
+
+    expense.amount = updated.amount
+    expense.category = updated.category
+    expense.description = updated.description
+    expense.expense_date = datetime.strptime(
+        updated.expense_date,
+        "%Y-%m-%d"
+    ).date()
+
+    db.commit()
+    db.refresh(expense)
+
+    db.close()
+
+    return {
+        "message": "Expense updated successfully"
+    }
 

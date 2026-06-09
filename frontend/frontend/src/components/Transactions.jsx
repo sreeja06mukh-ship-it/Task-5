@@ -1,17 +1,16 @@
 import { useEffect, useState } from "react";
 
 function Transactions() {
+  const [expenses, setExpenses] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [expenses, setExpenses] = useState([]);
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState("date_desc");
-
   const [currentPage, setCurrentPage] = useState(1);
 
-const recordsPerPage = 10;
+  const recordsPerPage = 10;
 
   const fetchExpenses = async (url) => {
     try {
@@ -41,120 +40,160 @@ const recordsPerPage = 10;
     fetchExpenses(url);
   };
 
+  const filteredExpenses = expenses.filter((expense) => {
+    const matchesSearch =
+      expense.category
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      expense.description
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+
+    const matchesCategory =
+      selectedCategory === "All" ||
+      expense.category === selectedCategory;
+
+    return matchesSearch && matchesCategory;
+  });
+
+  let sortedExpenses = [...filteredExpenses];
+
+  switch (sortBy) {
+    case "date_desc":
+      sortedExpenses.sort(
+        (a, b) =>
+          new Date(b.expense_date) -
+          new Date(a.expense_date)
+      );
+      break;
+
+    case "date_asc":
+      sortedExpenses.sort(
+        (a, b) =>
+          new Date(a.expense_date) -
+          new Date(b.expense_date)
+      );
+      break;
+
+    case "amount_desc":
+      sortedExpenses.sort(
+        (a, b) => b.amount - a.amount
+      );
+      break;
+
+    case "amount_asc":
+      sortedExpenses.sort(
+        (a, b) => a.amount - b.amount
+      );
+      break;
+
+    default:
+      break;
+  }
+
+  const totalPages = Math.ceil(
+    sortedExpenses.length / recordsPerPage
+  );
+
+  const lastIndex = currentPage * recordsPerPage;
+  const firstIndex = lastIndex - recordsPerPage;
+
+  const currentExpenses = sortedExpenses.slice(
+    firstIndex,
+    lastIndex
+  );
+
+  const handleExportCSV = () => {
+    const headers = [
+      "Date",
+      "Category",
+      "Amount",
+      "Description",
+      "Source",
+    ];
+
+    const rows = sortedExpenses.map((expense) => [
+      expense.expense_date,
+      expense.category,
+      expense.amount,
+      expense.description,
+      expense.source,
+    ]);
+
+    const csvContent = [headers, ...rows]
+      .map((row) => row.join(","))
+      .join("\n");
+
+    const blob = new Blob([csvContent], {
+      type: "text/csv;charset=utf-8;",
+    });
+
+    const url = window.URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "transactions.csv";
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    window.URL.revokeObjectURL(url);
+  };
+
   if (loading) {
     return <p>Loading transactions...</p>;
   }
-  
-const filteredExpenses = expenses.filter((expense) => {
 
-  const matchesSearch =
-    expense.category
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase()) ||
-
-    expense.description
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-
-  const matchesCategory =
-    selectedCategory === "All" ||
-
-    expense.category === selectedCategory;
-
-  return matchesSearch && matchesCategory;
-
-});
-
-const lastIndex = currentPage * recordsPerPage;
-
-const firstIndex = lastIndex - recordsPerPage;
-
-const currentExpenses = filteredExpenses.slice(
-  firstIndex,
-  lastIndex
-);
-
-const totalPages = Math.ceil(
-  filteredExpenses.length / recordsPerPage
-);
-
-let sortedExpenses = [...expenses];
-
-switch (sortBy) {
-  case "date_desc":
-    sortedExpenses.sort(
-      (a, b) =>
-        new Date(b.expense_date) -
-        new Date(a.expense_date)
-    );
-    break;
-
-  case "date_asc":
-    sortedExpenses.sort(
-      (a, b) =>
-        new Date(a.expense_date) -
-        new Date(b.expense_date)
-    );
-    break;
-
-  case "amount_desc":
-    sortedExpenses.sort(
-      (a, b) => b.amount - a.amount
-    );
-    break;
-
-  case "amount_asc":
-    sortedExpenses.sort(
-      (a, b) => a.amount - b.amount
-    );
-    break;
-
-  default:
-    break;
-}
   return (
     <div>
       <h2>Transactions</h2>
+
+      <button
+        onClick={handleExportCSV}
+        style={{
+          marginBottom: "15px",
+          padding: "8px 15px",
+          cursor: "pointer",
+        }}
+      >
+        Export CSV
+      </button>
+
       <div style={{ marginBottom: "15px" }}>
-  <input
-    type="text"
-    placeholder="Search by category or description..."
-    value={searchTerm}
-    onChange={(e) => {
-      setSearchTerm(e.target.value);
-      setCurrentPage(1);
-    }}
-    style={{
-      width: "300px",
-      padding: "8px",
-    }}
-  />
-  <div style={{ marginTop: "10px" }}>
-  <select
-    value={selectedCategory}
-    onChange={(e) => {
-      setSelectedCategory(e.target.value);
-      setCurrentPage(1);
-    }}
-  >
-    <option value="All">All Categories</option>
+        <input
+          type="text"
+          placeholder="Search by category or description..."
+          value={searchTerm}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            setCurrentPage(1);
+          }}
+          style={{
+            width: "300px",
+            padding: "8px",
+          }}
+        />
+      </div>
 
-    <option value="Food">Food</option>
-
-    <option value="Travel">Travel</option>
-
-    <option value="Shopping">Shopping</option>
-
-    <option value="Utilities">Utilities</option>
-
-    <option value="Health">Health</option>
-
-    <option value="Entertainment">Entertainment</option>
-
-    <option value="Other">Other</option>
-  </select>
-</div>
-</div>
+      <div style={{ marginBottom: "10px" }}>
+        <select
+          value={selectedCategory}
+          onChange={(e) => {
+            setSelectedCategory(e.target.value);
+            setCurrentPage(1);
+          }}
+        >
+          <option value="All">All Categories</option>
+          <option value="Food">Food</option>
+          <option value="Travel">Travel</option>
+          <option value="Shopping">Shopping</option>
+          <option value="Utilities">Utilities</option>
+          <option value="Health">Health</option>
+          <option value="Entertainment">Entertainment</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
 
       <div style={{ marginBottom: "20px" }}>
         <input
@@ -178,26 +217,24 @@ switch (sortBy) {
         </button>
       </div>
 
-      <select
-  value={sortBy}
-  onChange={(e) => setSortBy(e.target.value)}
->
-  <option value="date_desc">
-    Newest First
-  </option>
-
-  <option value="date_asc">
-    Oldest First
-  </option>
-
-  <option value="amount_desc">
-    Amount: High → Low
-  </option>
-
-  <option value="amount_asc">
-    Amount: Low → High
-  </option>
-</select>
+      <div style={{ marginBottom: "20px" }}>
+        <select
+          value={sortBy}
+          onChange={(e) => {
+            setSortBy(e.target.value);
+            setCurrentPage(1);
+          }}
+        >
+          <option value="date_desc">Newest First</option>
+          <option value="date_asc">Oldest First</option>
+          <option value="amount_desc">
+            Amount: High → Low
+          </option>
+          <option value="amount_asc">
+            Amount: Low → High
+          </option>
+        </select>
+      </div>
 
       <table border="1" cellPadding="10">
         <thead>
@@ -211,7 +248,7 @@ switch (sortBy) {
         </thead>
 
         <tbody>
-          {sortedExpenses.map((expense) => (
+          {currentExpenses.map((expense) => (
             <tr key={expense.id}>
               <td>{expense.expense_date}</td>
               <td>{expense.category}</td>
@@ -222,25 +259,30 @@ switch (sortBy) {
           ))}
         </tbody>
       </table>
+
       <div style={{ marginTop: "20px" }}>
-  <button
-    onClick={() => setCurrentPage(currentPage - 1)}
-    disabled={currentPage === 1}
-  >
-    Previous
-  </button>
+        <button
+          onClick={() =>
+            setCurrentPage(currentPage - 1)
+          }
+          disabled={currentPage === 1}
+        >
+          Previous
+        </button>
 
-  <span style={{ margin: "0 15px" }}>
-    Page {currentPage} of {totalPages}
-  </span>
+        <span style={{ margin: "0 15px" }}>
+          Page {currentPage} of {totalPages}
+        </span>
 
-  <button
-    onClick={() => setCurrentPage(currentPage + 1)}
-    disabled={currentPage === totalPages}
-  >
-    Next
-  </button>
-</div>
+        <button
+          onClick={() =>
+            setCurrentPage(currentPage + 1)
+          }
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 function Transactions() {
+  const [searchTerm, setSearchTerm] = useState("");
   const [expenses, setExpenses] = useState([]);
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
@@ -42,21 +43,46 @@ const recordsPerPage = 10;
     return <p>Loading transactions...</p>;
   }
   
-  const lastIndex = currentPage * recordsPerPage;
+const filteredExpenses = expenses.filter((expense) => {
+  const search = searchTerm.toLowerCase();
+
+  return (
+    expense.category.toLowerCase().includes(search) ||
+    expense.description.toLowerCase().includes(search)
+  );
+});
+
+const lastIndex = currentPage * recordsPerPage;
 
 const firstIndex = lastIndex - recordsPerPage;
 
-const currentExpenses = expenses.slice(
+const currentExpenses = filteredExpenses.slice(
   firstIndex,
   lastIndex
 );
 
 const totalPages = Math.ceil(
-  expenses.length / recordsPerPage
+  filteredExpenses.length / recordsPerPage
 );
+
   return (
     <div>
       <h2>Transactions</h2>
+      <div style={{ marginBottom: "15px" }}>
+  <input
+    type="text"
+    placeholder="Search by category or description..."
+    value={searchTerm}
+    onChange={(e) => {
+      setSearchTerm(e.target.value);
+      setCurrentPage(1);
+    }}
+    style={{
+      width: "300px",
+      padding: "8px",
+    }}
+  />
+</div>
 
       <div style={{ marginBottom: "20px" }}>
         <input

@@ -9,6 +9,15 @@ function Transactions() {
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState("date_desc");
   const [currentPage, setCurrentPage] = useState(1);
+  const [editingExpense, setEditingExpense] = useState(null);
+
+const [editAmount, setEditAmount] = useState("");
+
+const [editCategory, setEditCategory] = useState("");
+
+const [editDescription, setEditDescription] = useState("");
+
+const [editDate, setEditDate] = useState("");
 
   const recordsPerPage = 10;
 
@@ -287,15 +296,31 @@ function Transactions() {
   <td>{expense.description}</td>
   <td>{expense.source}</td>
 
-  <td>
-    <button
-      onClick={() =>
-        handleDelete(expense.id)
-      }
-    >
-      Delete
-    </button>
-  </td>
+<td>
+  <button
+    onClick={() => {
+      setEditingExpense(expense);
+
+      setEditAmount(expense.amount);
+
+      setEditCategory(expense.category);
+
+      setEditDescription(expense.description);
+
+      setEditDate(expense.expense_date);
+    }}
+  >
+    Edit
+  </button>
+
+  <button
+    onClick={() => handleDelete(expense.id)}
+    style={{ marginLeft: "8px" }}
+  >
+    Delete
+  </button>
+</td>
+
 </tr>
           ))}
         </tbody>

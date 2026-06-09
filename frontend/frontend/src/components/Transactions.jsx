@@ -186,6 +186,73 @@ const [editDate, setEditDate] = useState("");
     <div>
       <h2>Transactions</h2>
 
+      {editingExpense && (
+  <div
+    style={{
+      border: "1px solid #ccc",
+      padding: "15px",
+      marginBottom: "20px",
+      borderRadius: "8px",
+    }}
+  >
+    <h3>Edit Expense</h3>
+
+    <div style={{ marginBottom: "10px" }}>
+      <label>Amount: </label>
+      <input
+        type="number"
+        value={editAmount}
+        onChange={(e) => setEditAmount(e.target.value)}
+      />
+    </div>
+
+    <div style={{ marginBottom: "10px" }}>
+      <label>Category: </label>
+      <select
+        value={editCategory}
+        onChange={(e) => setEditCategory(e.target.value)}
+      >
+        <option value="Food">Food</option>
+        <option value="Travel">Travel</option>
+        <option value="Shopping">Shopping</option>
+        <option value="Utilities">Utilities</option>
+        <option value="Health">Health</option>
+        <option value="Entertainment">Entertainment</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+
+    <div style={{ marginBottom: "10px" }}>
+      <label>Description: </label>
+      <input
+        type="text"
+        value={editDescription}
+        onChange={(e) => setEditDescription(e.target.value)}
+      />
+    </div>
+
+    <div style={{ marginBottom: "10px" }}>
+      <label>Date: </label>
+      <input
+        type="date"
+        value={editDate}
+        onChange={(e) => setEditDate(e.target.value)}
+      />
+    </div>
+
+    <button>
+      Update Expense
+    </button>
+
+    <button
+      style={{ marginLeft: "10px" }}
+      onClick={() => setEditingExpense(null)}
+    >
+      Cancel
+    </button>
+  </div>
+)}
+
       <button
         onClick={handleExportCSV}
         style={{

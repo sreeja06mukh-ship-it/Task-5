@@ -212,6 +212,29 @@ async def upload_receipt(file: UploadFile = File(...)):
         return {
             "error": str(e)
         }
+    
+    
+@app.delete("/expenses/{expense_id}")
+def delete_expense(expense_id: int):
 
+    db = SessionLocal()
+
+    expense = db.query(Expense).filter(
+        Expense.id == expense_id
+    ).first()
+
+    if expense is None:
+        db.close()
+        return {
+            "message": "Expense not found"
+        }
+
+    db.delete(expense)
+    db.commit()
+    db.close()
+
+    return {
+        "message": "Expense deleted successfully"
+    }
 
 

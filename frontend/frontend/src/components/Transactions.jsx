@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 function Transactions() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
   const [expenses, setExpenses] = useState([]);
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
@@ -44,12 +45,23 @@ const recordsPerPage = 10;
   }
   
 const filteredExpenses = expenses.filter((expense) => {
-  const search = searchTerm.toLowerCase();
 
-  return (
-    expense.category.toLowerCase().includes(search) ||
-    expense.description.toLowerCase().includes(search)
-  );
+  const matchesSearch =
+    expense.category
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase()) ||
+
+    expense.description
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+
+  const matchesCategory =
+    selectedCategory === "All" ||
+
+    expense.category === selectedCategory;
+
+  return matchesSearch && matchesCategory;
+
 });
 
 const lastIndex = currentPage * recordsPerPage;
@@ -82,6 +94,31 @@ const totalPages = Math.ceil(
       padding: "8px",
     }}
   />
+  <div style={{ marginTop: "10px" }}>
+  <select
+    value={selectedCategory}
+    onChange={(e) => {
+      setSelectedCategory(e.target.value);
+      setCurrentPage(1);
+    }}
+  >
+    <option value="All">All Categories</option>
+
+    <option value="Food">Food</option>
+
+    <option value="Travel">Travel</option>
+
+    <option value="Shopping">Shopping</option>
+
+    <option value="Utilities">Utilities</option>
+
+    <option value="Health">Health</option>
+
+    <option value="Entertainment">Entertainment</option>
+
+    <option value="Other">Other</option>
+  </select>
+</div>
 </div>
 
       <div style={{ marginBottom: "20px" }}>

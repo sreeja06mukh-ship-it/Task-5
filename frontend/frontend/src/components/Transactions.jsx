@@ -7,6 +7,7 @@ function Transactions() {
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [loading, setLoading] = useState(true);
+  const [sortBy, setSortBy] = useState("date_desc");
 
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -77,6 +78,40 @@ const totalPages = Math.ceil(
   filteredExpenses.length / recordsPerPage
 );
 
+let sortedExpenses = [...expenses];
+
+switch (sortBy) {
+  case "date_desc":
+    sortedExpenses.sort(
+      (a, b) =>
+        new Date(b.expense_date) -
+        new Date(a.expense_date)
+    );
+    break;
+
+  case "date_asc":
+    sortedExpenses.sort(
+      (a, b) =>
+        new Date(a.expense_date) -
+        new Date(b.expense_date)
+    );
+    break;
+
+  case "amount_desc":
+    sortedExpenses.sort(
+      (a, b) => b.amount - a.amount
+    );
+    break;
+
+  case "amount_asc":
+    sortedExpenses.sort(
+      (a, b) => a.amount - b.amount
+    );
+    break;
+
+  default:
+    break;
+}
   return (
     <div>
       <h2>Transactions</h2>
@@ -143,6 +178,27 @@ const totalPages = Math.ceil(
         </button>
       </div>
 
+      <select
+  value={sortBy}
+  onChange={(e) => setSortBy(e.target.value)}
+>
+  <option value="date_desc">
+    Newest First
+  </option>
+
+  <option value="date_asc">
+    Oldest First
+  </option>
+
+  <option value="amount_desc">
+    Amount: High → Low
+  </option>
+
+  <option value="amount_asc">
+    Amount: Low → High
+  </option>
+</select>
+
       <table border="1" cellPadding="10">
         <thead>
           <tr>
@@ -155,7 +211,7 @@ const totalPages = Math.ceil(
         </thead>
 
         <tbody>
-          {currentExpenses.map((expense) => (
+          {sortedExpenses.map((expense) => (
             <tr key={expense.id}>
               <td>{expense.expense_date}</td>
               <td>{expense.category}</td>

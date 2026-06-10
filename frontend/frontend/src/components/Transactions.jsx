@@ -66,6 +66,38 @@ const [editDate, setEditDate] = useState("");
   }
 };
 
+const handleUpdate = async () => {
+  try {
+    const response = await fetch(
+      `https://api.sreeja.me/expenses/${editingExpense.id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          amount: Number(editAmount),
+          category: editCategory,
+          description: editDescription,
+          expense_date: editDate,
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Update failed");
+    }
+
+    alert("Expense updated successfully!");
+
+    setEditingExpense(null);
+
+    fetchExpenses("https://api.sreeja.me/expenses");
+  } catch (error) {
+    console.error(error);
+    alert("Failed to update expense.");
+  }
+};
   const handleFilter = () => {
     let url = "https://api.sreeja.me/expenses";
 
@@ -240,9 +272,11 @@ const [editDate, setEditDate] = useState("");
       />
     </div>
 
-    <button>
-      Update Expense
-    </button>
+    <button
+  onClick={handleUpdate}
+>
+  Update Expense
+</button>
 
     <button
       style={{ marginLeft: "10px" }}

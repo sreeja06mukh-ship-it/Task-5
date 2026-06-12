@@ -37,8 +37,10 @@ function App() {
       console.log(response.data);
 
       setReceiptData(response.data.expense);
+      alert("Receipt uploaded successfully!");
+
     } catch (err) {
-      console.log(err);
+      console.error(err);
 
       setError(
         "Sorry, we are getting high requests or server error. Please try again."
@@ -49,68 +51,83 @@ function App() {
   };
 
   return (
-    <div className="container">
-      <div className="card">
-        <h1>AI Receipt Scanner</h1>
 
-        <p className="subtitle">
-          Upload receipt images and extract structured data instantly
-        </p>
+<div className="container">
+  <div className="card">
 
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => setFile(e.target.files[0])}
-        />
+    <h1>AI Receipt Scanner</h1>
 
-        <button onClick={handleUpload} disabled={loading}>
-          {loading ? "Uploading..." : "Upload Receipt"}
-        </button>
+    <p className="subtitle">
+      Upload receipt images and extract structured data instantly
+    </p>
 
-        {loading && (
-          <div className="loader-section">
-            <div className="loader"></div>
-            <p>Analyzing receipt using AI...</p>
-          </div>
-        )}
+    <input
+      type="file"
+      accept="image/*"
+      onChange={(e) => setFile(e.target.files[0])}
+    />
 
-        {error && <div className="error-box">{error}</div>}
+    <button
+      onClick={handleUpload}
+      disabled={loading}
+    >
+      {loading ? "Uploading..." : "Upload Receipt"}
+    </button>
 
-        {receiptData && (
-          <div className="result-section">
-            <h2>Receipt Details</h2>
-
-            <table>
-              <tbody>
-                <tr>
-                  <td>Amount</td>
-                  <td>{receiptData.amount}</td>
-                </tr>
-
-                <tr>
-                  <td>Category</td>
-                  <td>{receiptData.category}</td>
-                </tr>
-
-                <tr>
-                  <td>Date</td>
-                  <td>{receiptData.date}</td>
-                </tr>
-
-                <tr>
-                  <td>Description</td>
-                  <td>{receiptData.description}</td>
-                </tr>
-              </tbody>
-            </table>
-
-            <Dashboard />
-            <Transactions />
-          </div>
-        )}
+    {loading && (
+      <div className="loader-section">
+        <div className="loader"></div>
+        <p>Analyzing receipt using AI...</p>
       </div>
-    </div>
+    )}
+
+    {error && (
+      <div className="error-box">
+        {error}
+      </div>
+    )}
+
+    {receiptData && (
+      <div className="result-section">
+
+        <h2>Receipt Details</h2>
+
+        <table>
+          <tbody>
+
+            <tr>
+              <td>Amount</td>
+              <td>{receiptData.amount}</td>
+            </tr>
+
+            <tr>
+              <td>Category</td>
+              <td>{receiptData.category}</td>
+            </tr>
+
+            <tr>
+              <td>Date</td>
+              <td>{receiptData.date}</td>
+            </tr>
+
+            <tr>
+              <td>Description</td>
+              <td>{receiptData.description}</td>
+            </tr>
+
+          </tbody>
+        </table>
+
+      </div>
+    )}
+
+    <Dashboard />
+
+    <Transactions />
+
+  </div>
+</div>
   );
-}
+}   
 
 export default App;

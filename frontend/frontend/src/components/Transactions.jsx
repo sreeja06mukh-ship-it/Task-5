@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 
-function Transactions() {
+function Transactions({
+  refreshDashboard,
+  setRefreshDashboard,
+}) {
   const [expenses, setExpenses] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -89,6 +92,7 @@ const handleUpdate = async () => {
     }
 
     alert("Expense updated successfully!");
+    setRefreshDashboard((prev) => prev + 1);
 
     setEditingExpense(null);
 

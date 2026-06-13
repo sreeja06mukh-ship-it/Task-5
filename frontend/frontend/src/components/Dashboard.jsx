@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { getMonthlySummary } from "../services/expenseService";
 import ExpensePieChart from "./ExpensePieChart";
 
-function Dashboard() {
+function Dashboard({ refreshDashboard }) {
   const [summary, setSummary] = useState([]);
   const [chartData, setChartData] = useState([]);
   const [month, setMonth] = useState("2026-06");
@@ -18,7 +18,7 @@ function Dashboard() {
       .catch((error) => {
         console.error("Error fetching summary:", error);
       });
-  }, [month]);
+}, [month, refreshDashboard]);
 
   return (
     <div>

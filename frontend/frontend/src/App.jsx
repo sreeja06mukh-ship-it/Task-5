@@ -9,6 +9,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [receiptData, setReceiptData] = useState(null);
   const [error, setError] = useState("");
+  const [refreshDashboard, setRefreshDashboard] = useState(0);
 
   const handleUpload = async () => {
     if (!file) {
@@ -121,9 +122,12 @@ function App() {
       </div>
     )}
 
-    <Dashboard />
+<Dashboard refreshDashboard={refreshDashboard} />
 
-    <Transactions />
+<Transactions
+  refreshDashboard={refreshDashboard}
+  setRefreshDashboard={setRefreshDashboard}
+/>
 
   </div>
 </div>

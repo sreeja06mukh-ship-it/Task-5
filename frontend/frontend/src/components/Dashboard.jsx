@@ -94,20 +94,33 @@ else {
       <h3>Category Totals</h3>
 
       {summary.length > 0 ? (
-        <div>
-          {summary.map((item) => (
-            <p key={item.category}>
-              <strong>{item.category}</strong>: ₹{item.amount}
-            </p>
-          ))}
-        </div>
-      ) : (
-        <p>No expenses found for this month.</p>
-      )}
+<div
+style={{
+textAlign: "center",
+padding: "30px"
+}}
+>
+
+<h2>📊</h2>
+
+<h3>No expenses found</h3>
+
+<p>
+
+Upload a receipt or choose another month.
+
+</p>
+
+</div>
+) : (
+
+<p>No expenses found for this month.</p>
+
+)}
 
       <ExpensePieChart data={chartData} />
     </div>
-  );
+      )
 }
 
 export default Dashboard;

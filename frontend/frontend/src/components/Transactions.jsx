@@ -453,47 +453,57 @@ const handleUpdate = async () => {
 </tr>
         </thead>
 
-        <tbody>
-          {currentExpenses.map((expense) => (
+<tbody>
+
+{currentExpenses.length > 0 ? (
+
+currentExpenses.map((expense) => (
+
 <tr key={expense.id}>
-  <td>{expense.expense_date}</td>
-  <td>{expense.category}</td>
-  <td>₹{expense.amount}</td>
-  <td>{expense.description}</td>
-  <td>{expense.source}</td>
+
+<td>{expense.expense_date}</td>
+<td>{expense.category}</td>
+<td>₹{expense.amount}</td>
+<td>{expense.description}</td>
+<td>{expense.source}</td>
 
 <td>
-  <div
-    style={{
-      display: "flex",
-      justifyContent: "center",
-      gap: "8px",
-    }}
-  >
-    <button
-      onClick={() => {
-        setEditingExpense(expense);
 
-        setEditAmount(expense.amount);
-        setEditCategory(expense.category);
-        setEditDescription(expense.description);
-        setEditDate(expense.expense_date);
-      }}
-    >
-      Edit
-    </button>
+{/* Edit/Delete buttons */}
 
-    <button
-      onClick={() => handleDelete(expense.id)}
-    >
-      Delete
-    </button>
-  </div>
 </td>
 
 </tr>
-          ))}
-        </tbody>
+
+))
+
+) : (
+
+<tr>
+
+<td
+colSpan="6"
+style={{
+textAlign: "center",
+padding: "40px"
+}}
+>
+
+<h2>📭</h2>
+
+<h3>No transactions found</h3>
+
+<p>
+Try changing your filters or upload a receipt.
+</p>
+
+</td>
+
+</tr>
+
+)}
+
+</tbody>
       </table>
 
       <div style={{ marginTop: "20px" }}>

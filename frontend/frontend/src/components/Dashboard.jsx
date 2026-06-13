@@ -6,6 +6,13 @@ function Dashboard({ refreshDashboard }) {
   const [summary, setSummary] = useState([]);
   const [chartData, setChartData] = useState([]);
   const [month, setMonth] = useState("2026-06");
+  const [totalExpense, setTotalExpense] = useState(0);
+
+const [transactionCount, setTransactionCount] = useState(0);
+
+const [topCategory, setTopCategory] = useState("-");
+
+const [averageExpense, setAverageExpense] = useState(0);
 
   useEffect(() => {
     getMonthlySummary(month)
@@ -14,6 +21,30 @@ function Dashboard({ refreshDashboard }) {
 
         setSummary(data);
         setChartData(data);
+        const total = data.reduce(
+  (sum, item) => sum + item.amount,
+  0
+);
+
+setTotalExpense(total);
+
+setTransactionCount(data.length);
+
+if (data.length > 0) {
+  const highest = data.reduce((a, b) =>
+    a.amount > b.amount ? a : b
+  );
+
+  setTopCategory(highest.category);
+
+  setAverageExpense(
+    (total / data.length).toFixed(2)
+  );
+}
+else {
+  setTopCategory("-");
+  setAverageExpense(0);
+}
       })
       .catch((error) => {
         console.error("Error fetching summary:", error);
@@ -29,6 +60,36 @@ function Dashboard({ refreshDashboard }) {
         value={month}
         onChange={(e) => setMonth(e.target.value)}
       />
+      <div
+  style={{
+    display: "grid",
+    gridTemplateColumns: "repeat(4,1fr)",
+    gap: "20px",
+    margin: "25px 0",
+  }}
+>
+
+  <div className="stat-card">
+    <h4>💰 Total Expense</h4>
+    <h2>₹{totalExpense}</h2>
+  </div>
+
+  <div className="stat-card">
+    <h4>🧾 Transactions</h4>
+    <h2>{transactionCount}</h2>
+  </div>
+
+  <div className="stat-card">
+    <h4>🏆 Top Category</h4>
+    <h2>{topCategory}</h2>
+  </div>
+
+  <div className="stat-card">
+    <h4>📊 Average</h4>
+    <h2>₹{averageExpense}</h2>
+  </div>
+
+</div>
 
       <h3>Category Totals</h3>
 

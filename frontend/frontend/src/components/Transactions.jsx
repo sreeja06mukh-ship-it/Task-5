@@ -303,24 +303,44 @@ const handleUpdate = async () => {
       </button>
 
 
-      <div style={{ marginBottom: "15px" }}>
-        <input
-          type="text"
-          placeholder="Search by category or description..."
-          value={searchTerm}
-          onChange={(e) => {
-            setSearchTerm(e.target.value);
-            setCurrentPage(1);
-          }}
-          style={{
-            width: "300px",
-            padding: "8px",
-          }}
-        />
-      </div>
+<div style={{ marginBottom: "15px" }}>
+  <label
+    style={{
+      display: "block",
+      fontWeight: "bold",
+      marginBottom: "5px",
+    }}
+  >
+    Search Transactions
+  </label>
 
-      <div style={{ marginBottom: "10px" }}>
-        <select
+  <input
+    type="text"
+    placeholder="Search by category or description..."
+    value={searchTerm}
+    onChange={(e) => {
+      setSearchTerm(e.target.value);
+      setCurrentPage(1);
+    }}
+    style={{
+      width: "300px",
+      padding: "8px",
+    }}
+  />
+</div>
+
+<div style={{ marginBottom: "15px" }}>
+  <label
+    style={{
+      display: "block",
+      fontWeight: "bold",
+      marginBottom: "5px",
+    }}
+  >
+    Filter by Category
+  </label>
+
+  <select
           value={selectedCategory}
           onChange={(e) => {
             setSelectedCategory(e.target.value);
@@ -338,46 +358,87 @@ const handleUpdate = async () => {
         </select>
       </div>
 
+<div style={{ marginBottom: "20px" }}>
+
+  <label
+    style={{
+      display: "block",
+      fontWeight: "bold",
+      marginBottom: "8px",
+    }}
+  >
+    Choose Date Range
+  </label>
+
+  <span>From:</span>
+
+  <input
+    type="date"
+    value={fromDate}
+    onChange={(e) => setFromDate(e.target.value)}
+    style={{ marginLeft: "8px" }}
+  />
+
+  <span style={{ marginLeft: "20px" }}>
+    To:
+  </span>
+
+  <input
+    type="date"
+    value={toDate}
+    onChange={(e) => setToDate(e.target.value)}
+    style={{ marginLeft: "8px" }}
+  />
+
+  <button
+    onClick={handleFilter}
+    style={{ marginLeft: "15px" }}
+  >
+    Apply Filter
+  </button>
+
+</div>
+
       <div style={{ marginBottom: "20px" }}>
-        <input
-          type="date"
-          value={fromDate}
-          onChange={(e) => setFromDate(e.target.value)}
-        />
-
-        <input
-          type="date"
-          value={toDate}
-          onChange={(e) => setToDate(e.target.value)}
-          style={{ marginLeft: "10px" }}
-        />
-
-        <button
-          onClick={handleFilter}
-          style={{ marginLeft: "10px" }}
-        >
-          Filter
-        </button>
-      </div>
-
-      <div style={{ marginBottom: "20px" }}>
-        <select
-          value={sortBy}
-          onChange={(e) => {
-            setSortBy(e.target.value);
-            setCurrentPage(1);
-          }}
-        >
-          <option value="date_desc">Newest First</option>
-          <option value="date_asc">Oldest First</option>
-          <option value="amount_desc">
-            Amount: High → Low
-          </option>
-          <option value="amount_asc">
-            Amount: Low → High
-          </option>
-        </select>
-      </div>
+  <label
+    style={{
+      display: "block",
+      fontWeight: "bold",
+      marginBottom: "5px",
+    }}
+  >
+    Sort Transactions
+  </label>
+<div
+  style={{
+    display: "flex",
+    justifyContent: "center",
+    marginTop: "10px",
+  }}
+></div>
+<select
+  value={sortBy}
+  onChange={(e) => {
+    setSortBy(e.target.value);
+    setCurrentPage(1);
+  }}
+  style={{
+    width: "260px",
+    padding: "8px",
+    fontSize: "16px",
+    cursor: "pointer",
+  }}
+>
+  <option value="date_desc">Newest First</option>
+  <option value="date_asc">Oldest First</option>
+  <option value="amount_desc">
+    Amount: High → Low
+  </option>
+  <option value="amount_asc">
+    Amount: Low → High
+  </option>
+</select>
+</div>
 
       <table border="1" cellPadding="10">
         <thead>
@@ -402,28 +463,32 @@ const handleUpdate = async () => {
   <td>{expense.source}</td>
 
 <td>
-  <button
-    onClick={() => {
-      setEditingExpense(expense);
-
-      setEditAmount(expense.amount);
-
-      setEditCategory(expense.category);
-
-      setEditDescription(expense.description);
-
-      setEditDate(expense.expense_date);
+  <div
+    style={{
+      display: "flex",
+      justifyContent: "center",
+      gap: "8px",
     }}
   >
-    Edit
-  </button>
+    <button
+      onClick={() => {
+        setEditingExpense(expense);
 
-  <button
-    onClick={() => handleDelete(expense.id)}
-    style={{ marginLeft: "8px" }}
-  >
-    Delete
-  </button>
+        setEditAmount(expense.amount);
+        setEditCategory(expense.category);
+        setEditDescription(expense.description);
+        setEditDate(expense.expense_date);
+      }}
+    >
+      Edit
+    </button>
+
+    <button
+      onClick={() => handleDelete(expense.id)}
+    >
+      Delete
+    </button>
+  </div>
 </td>
 
 </tr>

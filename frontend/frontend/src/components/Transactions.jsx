@@ -235,6 +235,7 @@ const handleUpdate = async () => {
 
     <div style={{ marginBottom: "10px" }}>
       <label>Amount: </label>
+      <div className="controls">
       <input
         type="number"
         value={editAmount}
@@ -256,6 +257,7 @@ const handleUpdate = async () => {
         <option value="Entertainment">Entertainment</option>
         <option value="Other">Other</option>
       </select>
+      </div>
     </div>
 
     <div style={{ marginBottom: "10px" }}>
@@ -383,6 +385,8 @@ const handleUpdate = async () => {
     To:
   </span>
 
+<div className="filter-row">
+
   <input
     type="date"
     value={toDate}
@@ -396,6 +400,7 @@ const handleUpdate = async () => {
   >
     Apply Filter
   </button>
+  </div>
 
 </div>
 
@@ -439,7 +444,7 @@ const handleUpdate = async () => {
   </option>
 </select>
 </div>
-
+<div className="table-container">
       <table border="1" cellPadding="10">
         <thead>
 
@@ -468,9 +473,28 @@ currentExpenses.map((expense) => (
 <td>{expense.source}</td>
 
 <td>
+  <div className="action-buttons">
 
-{/* Edit/Delete buttons */}
+    <button
+      onClick={() => {
+        setEditingExpense(expense);
 
+        setEditAmount(expense.amount);
+        setEditCategory(expense.category);
+        setEditDescription(expense.description);
+        setEditDate(expense.expense_date);
+      }}
+    >
+      Edit
+    </button>
+
+    <button
+      onClick={() => handleDelete(expense.id)}
+    >
+      Delete
+    </button>
+
+  </div>
 </td>
 
 </tr>
@@ -505,6 +529,7 @@ Try changing your filters or upload a receipt.
 
 </tbody>
       </table>
+      </div>
 
       <div style={{ marginTop: "20px" }}>
         <button

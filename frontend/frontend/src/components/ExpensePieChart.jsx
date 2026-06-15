@@ -19,7 +19,9 @@ const COLORS = [
 
 export default function ExpensePieChart({ data }) {
   return (
+
     <ResponsiveContainer width="100%" height={350}>
+
       <PieChart>
         <Pie
           data={data}

@@ -52,8 +52,10 @@ else {
 }, [month, refreshDashboard]);
 
   return (
-    <div>
-      <h2>Expense Dashboard</h2>
+  <div className="section">
+    <h2 className="section-title">
+        Expense Dashboard
+    </h2>
 
       <input
         type="month"

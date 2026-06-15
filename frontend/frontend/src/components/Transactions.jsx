@@ -102,16 +102,6 @@ const handleUpdate = async () => {
     alert("Failed to update expense.");
   }
 };
-  const handleFilter = () => {
-    let url = "https://api.sreeja.me/expenses";
-
-    if (fromDate || toDate) {
-      url += `?from_date=${fromDate}&to_date=${toDate}`;
-    }
-
-    setCurrentPage(1);
-    fetchExpenses(url);
-  };
 
   const filteredExpenses = expenses.filter((expense) => {
     const matchesSearch =
@@ -219,8 +209,10 @@ const handleUpdate = async () => {
   }
 
   return (
-    <div>
-      <h2>Transactions</h2>
+    <div className="section">
+    <h2 className="section-title">
+        Transaction History
+    </h2>
 
       {editingExpense && (
   <div
@@ -374,12 +366,24 @@ const handleUpdate = async () => {
 
   <span>From:</span>
 
-  <input
-    type="date"
-    value={fromDate}
-    onChange={(e) => setFromDate(e.target.value)}
-    style={{ marginLeft: "8px" }}
-  />
+<input
+  type="date"
+  value={fromDate}
+  onChange={(e) => {
+    setFromDate(e.target.value);
+
+    let url = "https://api.sreeja.me/expenses";
+
+    const newFrom = e.target.value;
+
+    if (newFrom || toDate) {
+      url += `?from_date=${newFrom}&to_date=${toDate}`;
+    }
+
+    setCurrentPage(1);
+    fetchExpenses(url);
+  }}
+/>
 
   <span style={{ marginLeft: "20px" }}>
     To:
@@ -388,39 +392,41 @@ const handleUpdate = async () => {
 <div className="filter-row">
 
   <input
-    type="date"
-    value={toDate}
-    onChange={(e) => setToDate(e.target.value)}
-    style={{ marginLeft: "8px" }}
-  />
+  type="date"
+  value={toDate}
+  onChange={(e) => {
+    setToDate(e.target.value);
 
-  <button
-    onClick={handleFilter}
-    style={{ marginLeft: "15px" }}
-  >
-    Apply Filter
-  </button>
-  </div>
+    let url = "https://api.sreeja.me/expenses";
 
-</div>
+    const newTo = e.target.value;
 
-      <div style={{ marginBottom: "20px" }}>
+    if (fromDate || newTo) {
+      url += `?from_date=${fromDate}&to_date=${newTo}`;
+    }
+
+    setCurrentPage(1);
+    fetchExpenses(url);
+  }}
+/>
+
+<div
+  className="sort-container"
+  style={{
+    textAlign: "center",
+    margin: "25px 0",
+  }}
+>
   <label
     style={{
-      display: "block",
       fontWeight: "bold",
-      marginBottom: "5px",
+      display: "block",
+      marginBottom: "8px",
     }}
   >
     Sort Transactions
-  </label>
-<div
-  style={{
-    display: "flex",
-    justifyContent: "center",
-    marginTop: "10px",
-  }}
-></div>
+    </label>
+
 <select
   value={sortBy}
   onChange={(e) => {
@@ -429,9 +435,8 @@ const handleUpdate = async () => {
   }}
   style={{
     width: "260px",
-    padding: "8px",
+    padding: "10px",
     fontSize: "16px",
-    cursor: "pointer",
   }}
 >
   <option value="date_desc">Newest First</option>
@@ -555,8 +560,11 @@ Try changing your filters or upload a receipt.
         </button>
       </div>
     </div>
+    </div>
+    </div>
   );
 }
+  
 
 export default Transactions;
 

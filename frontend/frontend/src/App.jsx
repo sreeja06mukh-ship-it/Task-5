@@ -91,28 +91,32 @@ function App() {
     {receiptData && (
       <div className="result-section">
 
-        <h2>Receipt Details</h2>
+        <h2>✅ Receipt Details</h2>
+
+<p className="success-text">
+  AI Extraction Successful
+</p>
 
         <table>
           <tbody>
 
             <tr>
-              <td>Amount</td>
-              <td>{receiptData.amount}</td>
+              <td>💰 Amount</td>
+              <td>₹{receiptData.amount}</td>
             </tr>
 
             <tr>
-              <td>Category</td>
+              <td>📂 Category</td>
               <td>{receiptData.category}</td>
             </tr>
 
             <tr>
-              <td>Date</td>
+              <td>📅 Date</td>
               <td>{receiptData.date}</td>
             </tr>
 
             <tr>
-              <td>Description</td>
+              <td>📝 Description</td>
               <td>{receiptData.description}</td>
             </tr>
 

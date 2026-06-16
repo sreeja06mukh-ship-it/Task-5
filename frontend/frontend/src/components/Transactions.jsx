@@ -410,13 +410,7 @@ const handleUpdate = async () => {
   }}
 />
 
-<div
-  className="sort-container"
-  style={{
-    textAlign: "center",
-    margin: "25px 0",
-  }}
->
+<div className="sort-container">
   <label
     style={{
       fontWeight: "bold",
@@ -536,29 +530,25 @@ Try changing your filters or upload a receipt.
       </table>
       </div>
 
-      <div style={{ marginTop: "20px" }}>
-        <button
-          onClick={() =>
-            setCurrentPage(currentPage - 1)
-          }
-          disabled={currentPage === 1}
-        >
-          Previous
-        </button>
+      <div className="pagination">
+  <button
+    onClick={() => setCurrentPage(currentPage - 1)}
+    disabled={currentPage === 1}
+  >
+    Previous
+  </button>
 
-        <span style={{ margin: "0 15px" }}>
-          Page {currentPage} of {totalPages}
-        </span>
+  <span>
+    Page {currentPage} of {totalPages}
+  </span>
 
-        <button
-          onClick={() =>
-            setCurrentPage(currentPage + 1)
-          }
-          disabled={currentPage === totalPages}
-        >
-          Next
-        </button>
-      </div>
+  <button
+    onClick={() => setCurrentPage(currentPage + 1)}
+    disabled={currentPage === totalPages}
+  >
+    Next
+  </button>
+</div>
     </div>
     </div>
     </div>
